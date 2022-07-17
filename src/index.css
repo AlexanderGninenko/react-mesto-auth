@@ -15,7 +15,16 @@
 
 /* HEADER */
 @import './blocks/header/header.css';
+@import './blocks/header/__link/header__link.css';
 @import './blocks/header/__logo/header__logo.css';
+
+/* AUTH */
+@import './blocks/auth/auth.css';
+@import './blocks/auth/__title/auth__title.css';
+@import './blocks/auth/__button/auth__button.css';
+@import './blocks/auth/__input/auth__input.css';
+@import './blocks/auth/__sign-in/auth__sign-in.css';
+
 
 /*PROFILE*/
 @import './blocks/profile/profile.css';
