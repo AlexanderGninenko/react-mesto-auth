@@ -1,4 +1,11 @@
-export const BASE_URL = "https://auth.nomoreparties.co";
+const BASE_URL = "https://auth.nomoreparties.co";
+
+const checkResponse(res) {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    }
 
 export const register = (password, email) => {
   console.log(password, email);
@@ -9,19 +16,6 @@ export const register = (password, email) => {
     },
     body: JSON.stringify({ password: password, email: email  })
   })
-    .then((response) => {
-      console.log(response)
-      try {
-        if (response.ok) {
-          return response.json();
-        }
-      } catch (e) {
-        return e;
-      }
-    })
-    .then((res) => {
-      console.log(res);
-      return res;
-    })
+    .then((checkResponse)
     .catch((err) => console.log(err));
 };
