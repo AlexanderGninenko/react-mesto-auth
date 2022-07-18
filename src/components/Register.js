@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { register } from "../utils/Auth";  
 
-const Register = () => {
+const Register = ({onRegister, isLoading}) => {
   const [values, setValues] = useState({});
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,7 +14,7 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    register(values.password, values.email)
+    onRegister(values.password, values.email);
 }
 
   return (
@@ -25,7 +22,7 @@ const Register = () => {
     <h1 className="auth__title">Регистрация</h1>
     <input name='email' value={values.email || ''} onChange={handleChange} className="auth__input" placeholder="Email"/>
     <input name='password' value={values.password || ''} onChange={handleChange} className="auth__input" placeholder="Пароль"/>
-    <button className="auth__button">Зарегистрироваться</button>
+    <button className="auth__button">{isLoading ? 'Регистрируемся...' : 'Зарегистрироваться'}</button>
     <span className="auth__sign-in">Уже зарегистрированы? <Link className="auth__sign-in" to='/sign-in'>Войти</Link></span>
   </form>
   )

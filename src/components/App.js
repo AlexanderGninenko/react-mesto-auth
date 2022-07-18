@@ -11,8 +11,9 @@ import Register from "./Register";
 import Login from "./Login";
 import { api } from "../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useHistory, withRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+import * as auth from "../utils/Auth";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
@@ -32,6 +33,10 @@ function App() {
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
 
+  const [email, setEmail] = React.useState("");
+
+  const history = useHistory();
+
   React.useEffect(() => {
     api
       .getInitialCards()
@@ -46,7 +51,9 @@ function App() {
         setCurrentUser(user);
       })
       .catch((err) => console.log(err));
-  }, []);
+    
+    tokenCheck();
+  },[]);
 
   const handleCardClick = (card) => {
     setIsImagePopupOpen(true);
@@ -130,6 +137,56 @@ function App() {
       .catch((err) => console.log(err));
   };
 
+  const handleRegistration = (password, email) => {
+    setIsRenderLoading(true);
+    auth
+      .register(password, email)
+      .then((res) => {
+        setIsRenderLoading(false);
+        if (!res) {
+          alert('Упс')
+          }
+          else history.push('/sign-in')
+      })
+      .catch((e) => console.log(e));
+      
+  };
+
+  const handleAuthorization = (password, email) => {
+    setIsRenderLoading(true);
+    auth
+      .authorization(password, email)
+      .then(token => auth.getContent(token))
+      .then((token) => {
+        if (token) {
+        setIsRenderLoading(false);
+        setLoggedIn(true);
+        }
+      })
+      .catch((e) => console.log(e));
+  };
+
+  const handleSignOut = () => {
+    setLoggedIn(false);
+    localStorage.removeItem('jwt');
+  }
+
+  const tokenCheck = () => {
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      auth
+      .getContent(token)
+      .then(res => {
+        if (res) {
+          setLoggedIn(true);
+          setEmail(res.data.email);
+          history.push('/');
+        }
+      })
+      .catch((err) => console.log(err))
+    }
+  }
+
   const closeAllPopups = () => {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -143,7 +200,7 @@ function App() {
     <Switch>
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
-          <Header loggedIn={loggedIn}/>
+          <Header loggedIn={loggedIn} email={email} onSignOut={handleSignOut}/>
           <ProtectedRoute
             exact
             path="/"
@@ -157,11 +214,14 @@ function App() {
             onCardClick={handleCardClick}
             onConfirmCardDelete={handleConfirmDeleteClick}
           />
-          <Route path='/sign-up'>
-            <Register/>
+          <Route path="/sign-up">
+            <Register
+              onRegister={handleRegistration}
+              isLoading={isRenderLoading}
+            />
           </Route>
-          <Route path='/sign-in'>
-            <Login/>
+          <Route path="/sign-in">
+            <Login onLogin={handleAuthorization} isLoading={isRenderLoading} />
           </Route>
 
           <EditProfilePopup
@@ -206,4 +266,4 @@ function App() {
   );
 }
 
-export default App;
+export default withRouter(App);
