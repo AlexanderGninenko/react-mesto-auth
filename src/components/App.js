@@ -11,7 +11,7 @@ import Register from "./Register";
 import Login from "./Login";
 import { api } from "../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { Route, Switch, useHistory, withRouter } from "react-router-dom";
+import { Redirect, Route, Switch, useHistory, withRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import * as auth from "../utils/Auth";
 
@@ -156,9 +156,10 @@ function App() {
     setIsRenderLoading(true);
     auth
       .authorization(password, email)
-      .then(token => auth.getContent(token))
-      .then((token) => {
-        if (token) {
+      .then(data => auth.getContent(data))
+      .then((res) => {
+        if (res) {
+        setEmail(res.data.email);
         setIsRenderLoading(false);
         setLoggedIn(true);
         }
