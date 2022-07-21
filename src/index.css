@@ -16,6 +16,9 @@
 /* HEADER */
 @import './blocks/header/header.css';
 @import './blocks/header/__link/header__link.css';
+@import './blocks/header/__email/header__email.css';
+@import './blocks/header/__info/header__info.css';
+@import './blocks/header/__signout/header__signout.css';
 @import './blocks/header/__logo/header__logo.css';
 
 /* AUTH */
@@ -77,3 +80,6 @@
 @import './blocks/popup/__image-wrapper/popup__image-wrapper.css';
 @import './blocks/popup/__image/popup__image.css';
 @import './blocks/popup/__image-description/popup__image-description.css';
+@import './blocks/popup/__info/popup__info.css';
+@import './blocks/popup/__info-image/popup__info-image.css';
+@import './blocks/popup/__info-message/popup__info-message.css';

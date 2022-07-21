@@ -17,7 +17,7 @@ export const register = (password, email) => {
   })
     .then(checkResponse)
     
-    .catch((err) => console.log(err));
+    // .catch((err) => console.log(err));
 };
 
 export const authorization = (password, email) => {

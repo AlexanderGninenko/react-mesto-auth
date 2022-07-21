@@ -8,10 +8,11 @@ import AddPlacePopup from "./AddPlacePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import EditProfilePopup from "./EditProfilePopup";
 import Register from "./Register";
+import InfoTooltip from "./InfoTooltip";
 import Login from "./Login";
 import { api } from "../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { Redirect, Route, Switch, useHistory, withRouter } from "react-router-dom";
+import { Route, Switch, useHistory, withRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import * as auth from "../utils/Auth";
 
@@ -24,6 +25,8 @@ function App() {
   const [isConfirmDeletePopupOpen, setIsConfirmDeletePopupOpen] =
     React.useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = React.useState(false);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
+  const [infoTooltipData, setInfoTooltipData] = React.useState({});
 
   const [isRenderLoading, setIsRenderLoading] = React.useState(false);
 
@@ -38,6 +41,8 @@ function App() {
   const history = useHistory();
 
   React.useEffect(() => {
+    tokenCheck();
+
     api
       .getInitialCards()
       .then((cards) => {
@@ -51,9 +56,7 @@ function App() {
         setCurrentUser(user);
       })
       .catch((err) => console.log(err));
-    
-    tokenCheck();
-  },[]);
+  }, []);
 
   const handleCardClick = (card) => {
     setIsImagePopupOpen(true);
@@ -141,27 +144,37 @@ function App() {
     setIsRenderLoading(true);
     auth
       .register(password, email)
-      .then((res) => {
-        setIsRenderLoading(false);
-        if (!res) {
-          alert('Упс')
-          }
-          else history.push('/sign-in')
+      .then(() => {
+        setInfoTooltipData({
+          image: "success",
+          message: "Вы успешно зарегистрировались!",
+        });
+        history.push("/sign-in");
       })
-      .catch((e) => console.log(e));
-      
+      .catch((e) => {
+        console.log(e);
+        setInfoTooltipData({
+          image: "fail",
+          message: "Что-то пошло не так! Попробуйте ещё раз.",
+        });
+
+      })
+      .finally(()=> {
+        setIsInfoTooltipOpen(true);
+        setIsRenderLoading(false);
+      })
   };
 
   const handleAuthorization = (password, email) => {
     setIsRenderLoading(true);
     auth
       .authorization(password, email)
-      .then(data => auth.getContent(data))
+      .then((data) => auth.getContent(data))
       .then((res) => {
         if (res) {
-        setEmail(res.data.email);
-        setIsRenderLoading(false);
-        setLoggedIn(true);
+          setEmail(res.data.email);
+          setIsRenderLoading(false);
+          setLoggedIn(true);
         }
       })
       .catch((e) => console.log(e));
@@ -169,24 +182,26 @@ function App() {
 
   const handleSignOut = () => {
     setLoggedIn(false);
-    localStorage.removeItem('jwt');
-  }
+
+    localStorage.removeItem("jwt");
+    history.push("/sign-in");
+  };
 
   const tokenCheck = () => {
-    const token = localStorage.getItem('jwt');
+    const token = localStorage.getItem("jwt");
     if (token) {
       auth
-      .getContent(token)
-      .then(res => {
-        if (res) {
-          setLoggedIn(true);
-          setEmail(res.data.email);
-          history.push('/');
-        }
-      })
-      .catch((err) => console.log(err))
+        .getContent(token)
+        .then((res) => {
+          if (res) {
+            setLoggedIn(true);
+            setEmail(res.data.email);
+            history.push("/");
+          }
+        })
+        .catch((err) => console.log(err));
     }
-  }
+  };
 
   const closeAllPopups = () => {
     setIsEditAvatarPopupOpen(false);
@@ -194,6 +209,7 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsConfirmDeletePopupOpen(false);
     setIsImagePopupOpen(false);
+    setIsInfoTooltipOpen(false);
     setSelectedCard(null);
   };
 
@@ -201,7 +217,7 @@ function App() {
     <Switch>
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
-          <Header loggedIn={loggedIn} email={email} onSignOut={handleSignOut}/>
+          <Header loggedIn={loggedIn} email={email} onSignOut={handleSignOut} />
           <ProtectedRoute
             exact
             path="/"
@@ -222,7 +238,11 @@ function App() {
             />
           </Route>
           <Route path="/sign-in">
-            <Login onLogin={handleAuthorization} isLoading={isRenderLoading} />
+            <Login
+              onLogin={handleAuthorization}
+              isLoading={isRenderLoading}
+              loggedIn={loggedIn}
+            />
           </Route>
 
           <EditProfilePopup
@@ -257,6 +277,12 @@ function App() {
           <ImagePopup
             isOpen={isImagePopupOpen}
             card={selectedCard}
+            onClose={closeAllPopups}
+          />
+
+          <InfoTooltip
+            isOpen={isInfoTooltipOpen}
+            data={infoTooltipData}
             onClose={closeAllPopups}
           />
 
