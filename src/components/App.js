@@ -173,11 +173,21 @@ function App() {
       .then((res) => {
         if (res) {
           setEmail(res.data.email);
-          setIsRenderLoading(false);
           setLoggedIn(true);
+
         }
       })
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        console.log(e);
+        setInfoTooltipData({
+          image: "fail",
+          message: "Что-то пошло не так! Попробуйте ещё раз.",
+        });
+      })
+      .finally(()=> {
+        setIsRenderLoading(false);
+        setIsInfoTooltipOpen(true);
+      })
   };
 
   const handleSignOut = () => {

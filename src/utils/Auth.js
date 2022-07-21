@@ -16,8 +16,6 @@ export const register = (password, email) => {
     body: JSON.stringify({ password, email }),
   })
     .then(checkResponse)
-    
-    // .catch((err) => console.log(err));
 };
 
 export const authorization = (password, email) => {
@@ -35,7 +33,6 @@ export const authorization = (password, email) => {
         return data.token;
       }
     })
-    .catch((err) => console.log(err));
 };
 
 export const getContent = (token) => {
