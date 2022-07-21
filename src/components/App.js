@@ -58,7 +58,7 @@ function App() {
         })
         .catch((err) => console.log(err));
     }
-  }, []);
+  }, [loggedIn]);
 
   const handleCardClick = (card) => {
     setIsImagePopupOpen(true);
