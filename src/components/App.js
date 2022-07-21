@@ -43,19 +43,21 @@ function App() {
   React.useEffect(() => {
     tokenCheck();
 
-    api
-      .getInitialCards()
-      .then((cards) => {
-        setCards(cards);
-      })
-      .catch((err) => console.log(err));
+    if (loggedIn) {
+      api
+        .getInitialCards()
+        .then((cards) => {
+          setCards(cards);
+        })
+        .catch((err) => console.log(err));
 
-    api
-      .getUserInfo()
-      .then((user) => {
-        setCurrentUser(user);
-      })
-      .catch((err) => console.log(err));
+      api
+        .getUserInfo()
+        .then((user) => {
+          setCurrentUser(user);
+        })
+        .catch((err) => console.log(err));
+    }
   }, []);
 
   const handleCardClick = (card) => {
@@ -157,12 +159,11 @@ function App() {
           image: "fail",
           message: "Что-то пошло не так! Попробуйте ещё раз.",
         });
-
       })
-      .finally(()=> {
+      .finally(() => {
         setIsInfoTooltipOpen(true);
         setIsRenderLoading(false);
-      })
+      });
   };
 
   const handleAuthorization = (password, email) => {
@@ -174,7 +175,6 @@ function App() {
         if (res) {
           setEmail(res.data.email);
           setLoggedIn(true);
-
         }
       })
       .catch((e) => {
@@ -183,11 +183,12 @@ function App() {
           image: "fail",
           message: "Что-то пошло не так! Попробуйте ещё раз.",
         });
-      })
-      .finally(()=> {
-        setIsRenderLoading(false);
         setIsInfoTooltipOpen(true);
       })
+      .finally(() => {
+        setIsRenderLoading(false);
+        
+      });
   };
 
   const handleSignOut = () => {
