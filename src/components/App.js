@@ -231,7 +231,7 @@ function App() {
           <Header loggedIn={loggedIn} email={email} onSignOut={handleSignOut} />
           <ProtectedRoute
             exact
-            path="/react-mesto-auth"
+            path="/react-mesto-auth/"
             component={Main}
             loggedIn={loggedIn}
             cards={cards}
@@ -242,13 +242,13 @@ function App() {
             onCardClick={handleCardClick}
             onConfirmCardDelete={handleConfirmDeleteClick}
           />
-          <Route path="/react-mesto-auth/sign-up">
+          <Route path="/react-mesto-auth/sign-up/">
             <Register
               onRegister={handleRegistration}
               isLoading={isRenderLoading}
             />
           </Route>
-          <Route path="/react-mesto-auth/sign-in">
+          <Route path="/react-mesto-auth/sign-in/">
             <Login
               onLogin={handleAuthorization}
               isLoading={isRenderLoading}
