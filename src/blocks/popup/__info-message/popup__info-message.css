@@ -8,3 +8,9 @@
     text-align: center;
     color: #000000;
 }
+
+@media screen and (max-width: 680px) {
+    .popup__info-message {
+        max-width: 300px;
+    }
+}

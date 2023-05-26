@@ -38,6 +38,7 @@ const AuthWithForm = ({ title, onAuth, children }) => {
         className="auth__input"
         placeholder="Пароль"
         type='password'
+        minLength={4}
         required
       />
       {children}
